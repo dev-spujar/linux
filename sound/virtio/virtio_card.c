@@ -273,7 +273,8 @@ static int virtsnd_validate(struct virtio_device *vdev)
 	if (!virtio_has_feature(vdev, VIRTIO_F_VERSION_1)) {
 		dev_err(&vdev->dev,
 			"device does not comply with spec version 1.x\n");
-		return -EINVAL;
+		/* FIXME */
+		//return -EINVAL;
 	}
 
 	if (!virtsnd_msg_timeout_ms) {

@@ -69,6 +69,7 @@
 #include <linux/virtio_config.h>
 #include <uapi/linux/virtio_mmio.h>
 #include <linux/virtio_ring.h>
+#include <linux/of.h>
 
 
 
@@ -131,7 +132,8 @@ static int vm_finalize_features(struct virtio_device *vdev)
 	if (vm_dev->version == 2 &&
 			!__virtio_test_bit(vdev, VIRTIO_F_VERSION_1)) {
 		dev_err(&vdev->dev, "New virtio-mmio devices (version 2) must provide VIRTIO_F_VERSION_1 feature!\n");
-		return -EINVAL;
+		/* FIXME */
+		//return -EINVAL;
 	}
 
 	writel(1, vm_dev->base + VIRTIO_MMIO_DRIVER_FEATURES_SEL);
@@ -390,6 +392,8 @@ static struct virtqueue *vm_setup_vq(struct virtio_device *vdev, unsigned int in
 	}
 
 	num = readl(vm_dev->base + VIRTIO_MMIO_QUEUE_NUM_MAX);
+	/* FIXME */
+	num = 1024;
 	if (num == 0) {
 		err = -ENOENT;
 		goto error_new_virtqueue;
@@ -595,6 +599,7 @@ static void virtio_mmio_release_dev(struct device *_d)
 static int virtio_mmio_probe(struct platform_device *pdev)
 {
 	struct virtio_mmio_device *vm_dev;
+	struct device_node *np = pdev->dev.of_node;
 	unsigned long magic;
 	int rc;
 
@@ -629,6 +634,12 @@ static int virtio_mmio_probe(struct platform_device *pdev)
 	}
 
 	vm_dev->vdev.id.device = readl(vm_dev->base + VIRTIO_MMIO_DEVICE_ID);
+
+	/* FIXME */
+	if (of_property_read_bool(np, "virtio-snd")) {
+		vm_dev->vdev.id.device = 25;
+	}
+
 	if (vm_dev->vdev.id.device == 0) {
 		/*
 		 * virtio-mmio device with an ID 0 is a (dummy) placeholder

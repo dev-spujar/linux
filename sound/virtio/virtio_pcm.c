@@ -115,7 +115,8 @@ static int virtsnd_pcm_build_hw(struct virtio_pcm_substream *vss,
 		dev_err(&vdev->dev,
 			"SID %u: invalid channel range [%u %u]\n",
 			vss->sid, info->channels_min, info->channels_max);
-		return -EINVAL;
+		/* FIXME */
+		//return -EINVAL;
 	}
 
 	vss->hw.channels_min = info->channels_min;
@@ -143,7 +144,8 @@ static int virtsnd_pcm_build_hw(struct virtio_pcm_substream *vss,
 		dev_err(&vdev->dev,
 			"SID %u: no supported PCM sample formats found\n",
 			vss->sid);
-		return -EINVAL;
+		/* FIXME */
+		//return -EINVAL;
 	}
 
 	values = le64_to_cpu(info->rates);
@@ -166,7 +168,8 @@ static int virtsnd_pcm_build_hw(struct virtio_pcm_substream *vss,
 		dev_err(&vdev->dev,
 			"SID %u: no supported PCM frame rates found\n",
 			vss->sid);
-		return -EINVAL;
+		/* FIXME */
+		//return -EINVAL;
 	}
 
 	vss->hw.periods_min = pcm_periods_min;
@@ -329,6 +332,8 @@ int virtsnd_pcm_parse_cfg(struct virtio_snd *snd)
 
 	virtio_cread_le(vdev, struct virtio_snd_config, streams,
 			&snd->nsubstreams);
+	/* FIXME */
+	snd->nsubstreams = 1;
 	if (!snd->nsubstreams)
 		return 0;
 
@@ -343,8 +348,9 @@ int virtsnd_pcm_parse_cfg(struct virtio_snd *snd)
 
 	rc = virtsnd_ctl_query_info(snd, VIRTIO_SND_R_PCM_INFO, 0,
 				    snd->nsubstreams, sizeof(*info), info);
-	if (rc)
-		goto on_exit;
+	/* FIXME */
+	//if (rc)
+	//	goto on_exit;
 
 	for (i = 0; i < snd->nsubstreams; ++i) {
 		struct virtio_pcm_substream *vss = &snd->substreams[i];
